@@ -104,9 +104,9 @@ export default defineComponent({
       type: Boolean,
       default: true
     },
-    exactMatches: {
+    tokenizedMatches: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   data() {
@@ -230,7 +230,7 @@ export default defineComponent({
         return this.items;
       }
 
-      if (this.exactMatches) {
+      if (!this.tokenizedMatches) {
         const regexp = new RegExp(this.escapeRegExp(this.input), 'i');
         return this.items.filter((item) => this.itemProjection(item).match(regexp));
       }

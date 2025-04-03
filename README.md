@@ -1,7 +1,10 @@
 # vue3-simple-typeahead
 
-## Forked from:
 [![npm](https://img.shields.io/npm/v/vue3-simple-typeahead.svg)](https://www.npmjs.com/package/vue3-simple-typeahead)
+[![vue3](https://img.shields.io/badge/vue-3.x-brightgreen.svg)](https://v3.vuejs.org/)
+[![License](https://img.shields.io/npm/l/vue3-simple-typeahead)](https://en.wikipedia.org/wiki/MIT_License)
+[![npm](https://img.shields.io/npm/dt/vue3-simple-typeahead.svg)](https://www.npmjs.com/package/vue3-simple-typeahead)
+[![npm bundle size](https://img.shields.io/bundlephobia/min/vue3-simple-typeahead?color=brightgreen)](https://www.npmjs.com/package/vue3-simple-typeahead)
 
 A Vue3 component for a simple typeahead component.
 It will show a list of suggested items based on the user input.
@@ -153,17 +156,17 @@ It would fallthrough to the input control of the component:
 
 ### Props
 
-| Prop                                | Type             | Default                    | Description                                                                                               |
-|:------------------------------------| :--------------- |:---------------------------|:----------------------------------------------------------------------------------------------------------|
-| [`id`](#id)                         | String           | Random id generation       | The id for the input control. Can be useful to link with a `label for=""`                                 |
-| [`placeholder`](#placeholder)       | String           | `''`                       | Placeholder text for the input                                                                            |
-| [`items`](#items)                   | Array (Required) |                            | List of objects or strings with the elements for suggestions                                              |
-| [`defaultItem`](#defaultItem)       | Any              |                            | Default item to be selected                                                                               |
-| [`minInputLength`](#minInputLength) | Number           | 2                          | Minimum input length for the suggestion length to appear, the prop value has to be >= 0                   |
-| [`minItemLength`](#minItemLength)   | Number           | 0                          | Minimum number of items that need to be visible for suggestions to appear, the prop value has to be >= 0  |
-| [`itemProjection`](#itemProjection) | Function: String | `(item) => {return item;}` | Projection function to map the items to a string value for search and display                             |
-| [`selectOnTab`](#selectOnTab)       | Boolean          | `true`                     | Enable/Disable item selection on <kbd>TAB</kbd>                                                           |
-| [`exactMatches`](#exactMatches)     | Boolean          | `true`                     | Filter the items on exact matches with the input. Otherwise, include partial whitespace-tokenized matches |
+| Prop                                | Type             | Default                    | Description                                                                                              |
+|:------------------------------------| :--------------- |:---------------------------|:---------------------------------------------------------------------------------------------------------|
+| [`id`](#id)                         | String           | Random id generation       | The id for the input control. Can be useful to link with a `label for=""`                                |
+| [`placeholder`](#placeholder)       | String           | `''`                       | Placeholder text for the input                                                                           |
+| [`items`](#items)                   | Array (Required) |                            | List of objects or strings with the elements for suggestions                                             |
+| [`defaultItem`](#defaultItem)       | Any              |                            | Default item to be selected                                                                              |
+| [`minInputLength`](#minInputLength) | Number           | 2                          | Minimum input length for the suggestion length to appear, the prop value has to be >= 0                  |
+| [`minItemLength`](#minItemLength)   | Number           | 0                          | Minimum number of items that need to be visible for suggestions to appear, the prop value has to be >= 0 |
+| [`itemProjection`](#itemProjection) | Function: String | `(item) => {return item;}` | Projection function to map the items to a string value for search and display                            |
+| [`selectOnTab`](#selectOnTab)       | Boolean          | `true`                     | Enable/Disable item selection on <kbd>TAB</kbd>                                                          |
+| [`tokenizedMatches`](#tokenizedMatches)     | Boolean          | `false`                    | Filter the items to include partial whitespace-tokenized matches                                         |
 
 _Remember you can always use lower-kebap-case for camelCase props like `min-input-length`_
 
