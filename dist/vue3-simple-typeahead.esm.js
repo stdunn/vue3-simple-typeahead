@@ -42,9 +42,9 @@ var script = defineComponent({
       type: Boolean,
       default: true
     },
-    exactMatches: {
+    tokenizedMatches: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
 
@@ -195,7 +195,7 @@ var script = defineComponent({
         return this.items;
       }
 
-      if (this.exactMatches) {
+      if (!this.tokenizedMatches) {
         const regexp = new RegExp(this.escapeRegExp(this.input), 'i');
         return this.items.filter(item => this.itemProjection(item).match(regexp));
       } // Split user input into tokens and lowercase them
@@ -221,7 +221,7 @@ var script = defineComponent({
   }
 });
 
-pushScopeId("data-v-23692a0f");
+pushScopeId("data-v-99a07096");
 
 const _hoisted_1 = ["id"];
 const _hoisted_2 = ["id", "placeholder"];
@@ -286,7 +286,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 }
 
 script.render = render;
-script.__scopeId = "data-v-23692a0f";
+script.__scopeId = "data-v-99a07096";
 
 // Import vue component
 // IIFE injects install function into component, allowing component
