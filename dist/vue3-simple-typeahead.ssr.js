@@ -55,13 +55,14 @@ function _arrayLikeToArray(arr, len) {
 
 function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}var script = /*#__PURE__*/vue.defineComponent({
+}var script = vue.defineComponent({
   name: 'Vue3SimpleTypeahead',
   emits: ['onInput', 'onFocus', 'onBlur', 'selectItem'],
   inheritAttrs: false,
   props: {
     id: {
-      type: String
+      type: String,
+      default: ''
     },
     placeholder: {
       type: String,
@@ -83,25 +84,24 @@ function _nonIterableRest() {
     minInputLength: {
       type: Number,
       default: 2,
-      validator: function validator(prop) {
-        return prop >= 0;
+      validator: function validator(val) {
+        return val >= 0;
       }
     },
     minItemLength: {
       type: Number,
       default: 0,
-      validator: function validator(prop) {
-        return prop >= 0;
+      validator: function validator(val) {
+        return val >= 0;
       }
     },
     selectOnTab: {
       type: Boolean,
       default: true
-    }
-  },
-  mounted: function mounted() {
-    if (this.defaultItem !== undefined && this.defaultItem !== null) {
-      this.selectItem(this.defaultItem);
+    },
+    exactMatches: {
+      type: Boolean,
+      default: true
     }
   },
   data: function data() {
@@ -112,10 +112,15 @@ function _nonIterableRest() {
       currentSelectionIndex: 0
     };
   },
+  mounted: function mounted() {
+    if (this.defaultItem !== undefined && this.defaultItem !== null) {
+      this.selectItem(this.defaultItem);
+    }
+  },
   methods: {
     onInput: function onInput() {
       if (this.isListVisible && this.currentSelectionIndex >= this.filteredItems.length) {
-        this.currentSelectionIndex = (this.filteredItems.length || 1) - 1;
+        this.currentSelectionIndex = Math.max(this.filteredItems.length - 1, 0);
       }
 
       this.$emit('onInput', {
@@ -137,14 +142,14 @@ function _nonIterableRest() {
         items: this.filteredItems
       });
     },
-    onArrowDown: function onArrowDown($event) {
+    onArrowDown: function onArrowDown() {
       if (this.isListVisible && this.currentSelectionIndex < this.filteredItems.length - 1) {
         this.currentSelectionIndex++;
       }
 
       this.scrollSelectionIntoView();
     },
-    onArrowUp: function onArrowUp($event) {
+    onArrowUp: function onArrowUp() {
       if (this.isListVisible && this.currentSelectionIndex > 0) {
         this.currentSelectionIndex--;
       }
@@ -154,20 +159,21 @@ function _nonIterableRest() {
     scrollSelectionIntoView: function scrollSelectionIntoView() {
       var _this = this;
 
-      setTimeout(function () {
-        var list_node = document.querySelector("#".concat(_this.wrapperId, " .simple-typeahead-list"));
-        var active_node = document.querySelector("#".concat(_this.wrapperId, " .simple-typeahead-list-item.simple-typeahead-list-item-active"));
+      this.$nextTick(function () {
+        var listNode = document.querySelector("#".concat(_this.wrapperId, " .simple-typeahead-list"));
+        var activeNode = document.querySelector("#".concat(_this.wrapperId, " .simple-typeahead-list-item.simple-typeahead-list-item-active"));
+        if (!listNode || !activeNode) return;
 
-        if (!(active_node.offsetTop >= list_node.scrollTop && active_node.offsetTop + active_node.offsetHeight < list_node.scrollTop + list_node.offsetHeight)) {
-          var scroll_to = 0;
+        if (!(activeNode.offsetTop >= listNode.scrollTop && activeNode.offsetTop + activeNode.offsetHeight < listNode.scrollTop + listNode.offsetHeight)) {
+          var scrollTo = 0;
 
-          if (active_node.offsetTop > list_node.scrollTop) {
-            scroll_to = active_node.offsetTop + active_node.offsetHeight - list_node.offsetHeight;
-          } else if (active_node.offsetTop < list_node.scrollTop) {
-            scroll_to = active_node.offsetTop;
+          if (activeNode.offsetTop > listNode.scrollTop) {
+            scrollTo = activeNode.offsetTop + activeNode.offsetHeight - listNode.offsetHeight;
+          } else if (activeNode.offsetTop < listNode.scrollTop) {
+            scrollTo = activeNode.offsetTop;
           }
 
-          list_node.scrollTo(0, scroll_to);
+          listNode.scrollTo(0, scrollTo);
         }
       });
     },
@@ -193,8 +199,17 @@ function _nonIterableRest() {
       return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     },
     boldMatchText: function boldMatchText(text) {
-      var regexp = new RegExp("(".concat(this.escapeRegExp(this.input), ")"), 'ig');
-      return text.replace(regexp, '<strong>$1</strong>');
+      var _this2 = this;
+
+      // Split the user input by whitespace and highlight each found token.
+      var tokens = this.input.trim().split(/\s+/);
+      var highlighted = text;
+      tokens.forEach(function (token) {
+        if (!token) return;
+        var re = new RegExp("(".concat(_this2.escapeRegExp(token), ")"), 'ig');
+        highlighted = highlighted.replace(re, '<strong>$1</strong>');
+      });
+      return highlighted;
     },
     clearInput: function clearInput() {
       this.input = '';
@@ -216,11 +231,33 @@ function _nonIterableRest() {
       return "".concat(this.inputId, "_wrapper");
     },
     filteredItems: function filteredItems() {
-      var _this2 = this;
+      var _this3 = this;
 
-      var regexp = new RegExp(this.escapeRegExp(this.input), 'i');
+      var userInput = this.input.trim();
+
+      if (!userInput) {
+        return this.items;
+      }
+
+      if (this.exactMatches) {
+        var regexp = new RegExp(this.escapeRegExp(this.input), 'i');
+        return this.items.filter(function (item) {
+          return _this3.itemProjection(item).match(regexp);
+        });
+      } // Split user input into tokens and lowercase them
+
+
+      var tokens = userInput.split(/\s+/).map(function (t) {
+        return t.toLowerCase();
+      });
       return this.items.filter(function (item) {
-        return _this2.itemProjection(item).match(regexp);
+        // Lowercase the projected text
+        var text = _this3.itemProjection(item).toLowerCase(); // Keep if at least one token matches
+
+
+        return tokens.some(function (token) {
+          return text.includes(token);
+        });
       });
     },
     isListVisible: function isListVisible() {
@@ -230,7 +267,7 @@ function _nonIterableRest() {
       return this.isListVisible && this.currentSelectionIndex < this.filteredItems.length ? this.filteredItems[this.currentSelectionIndex] : undefined;
     }
   }
-});vue.pushScopeId("data-v-f81ca714");
+});vue.pushScopeId("data-v-23692a0f");
 
 var _hoisted_1 = ["id"];
 var _hoisted_2 = ["id", "placeholder"];
@@ -313,7 +350,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, _hoisted_7))], 42, _hoisted_5);
   }), 128)), _ctx.$slots['list-footer'] ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_8, [vue.renderSlot(_ctx.$slots, "list-footer")])) : vue.createCommentVNode("", true)])) : vue.createCommentVNode("", true)], 8, _hoisted_1);
 }script.render = render;
-script.__scopeId = "data-v-f81ca714";// Import vue component
+script.__scopeId = "data-v-23692a0f";// Import vue component
 // IIFE injects install function into component, allowing component
 // to be registered via Vue.use() as well as Vue.component(),
 
@@ -329,7 +366,7 @@ var component = /*#__PURE__*/(function () {
 })(); // It's possible to expose named exports when writing components that can
 // also be used as directives, etc. - eg. import { RollupDemoDirective } from 'rollup-demo';
 // export const RollupDemoDirective = directive;
-var namedExports=/*#__PURE__*/Object.freeze({__proto__:null,'default': component});// only expose one global var, with named exports exposed as properties of
+var namedExports=/*#__PURE__*/Object.freeze({__proto__:null,'default':component});// only expose one global var, with named exports exposed as properties of
 // that global var (eg. plugin.namedExport)
 
 Object.entries(namedExports).forEach(function (_ref) {

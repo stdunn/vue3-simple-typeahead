@@ -1,12 +1,13 @@
 import { defineComponent, pushScopeId, popScopeId, openBlock, createElementBlock, withDirectives, createElementVNode, mergeProps, withKeys, withModifiers, vModelText, renderSlot, createCommentVNode, Fragment, renderList, normalizeClass } from 'vue';
 
-var script = /*#__PURE__*/defineComponent({
+var script = defineComponent({
   name: 'Vue3SimpleTypeahead',
   emits: ['onInput', 'onFocus', 'onBlur', 'selectItem'],
   inheritAttrs: false,
   props: {
     id: {
-      type: String
+      type: String,
+      default: ''
     },
     placeholder: {
       type: String,
@@ -30,26 +31,20 @@ var script = /*#__PURE__*/defineComponent({
     minInputLength: {
       type: Number,
       default: 2,
-      validator: prop => {
-        return prop >= 0;
-      }
+      validator: val => val >= 0
     },
     minItemLength: {
       type: Number,
       default: 0,
-      validator: prop => {
-        return prop >= 0;
-      }
+      validator: val => val >= 0
     },
     selectOnTab: {
       type: Boolean,
       default: true
-    }
-  },
-
-  mounted() {
-    if (this.defaultItem !== undefined && this.defaultItem !== null) {
-      this.selectItem(this.defaultItem);
+    },
+    exactMatches: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -62,10 +57,16 @@ var script = /*#__PURE__*/defineComponent({
     };
   },
 
+  mounted() {
+    if (this.defaultItem !== undefined && this.defaultItem !== null) {
+      this.selectItem(this.defaultItem);
+    }
+  },
+
   methods: {
     onInput() {
       if (this.isListVisible && this.currentSelectionIndex >= this.filteredItems.length) {
-        this.currentSelectionIndex = (this.filteredItems.length || 1) - 1;
+        this.currentSelectionIndex = Math.max(this.filteredItems.length - 1, 0);
       }
 
       this.$emit('onInput', {
@@ -90,7 +91,7 @@ var script = /*#__PURE__*/defineComponent({
       });
     },
 
-    onArrowDown($event) {
+    onArrowDown() {
       if (this.isListVisible && this.currentSelectionIndex < this.filteredItems.length - 1) {
         this.currentSelectionIndex++;
       }
@@ -98,7 +99,7 @@ var script = /*#__PURE__*/defineComponent({
       this.scrollSelectionIntoView();
     },
 
-    onArrowUp($event) {
+    onArrowUp() {
       if (this.isListVisible && this.currentSelectionIndex > 0) {
         this.currentSelectionIndex--;
       }
@@ -107,20 +108,21 @@ var script = /*#__PURE__*/defineComponent({
     },
 
     scrollSelectionIntoView() {
-      setTimeout(() => {
-        const list_node = document.querySelector(`#${this.wrapperId} .simple-typeahead-list`);
-        const active_node = document.querySelector(`#${this.wrapperId} .simple-typeahead-list-item.simple-typeahead-list-item-active`);
+      this.$nextTick(() => {
+        const listNode = document.querySelector(`#${this.wrapperId} .simple-typeahead-list`);
+        const activeNode = document.querySelector(`#${this.wrapperId} .simple-typeahead-list-item.simple-typeahead-list-item-active`);
+        if (!listNode || !activeNode) return;
 
-        if (!(active_node.offsetTop >= list_node.scrollTop && active_node.offsetTop + active_node.offsetHeight < list_node.scrollTop + list_node.offsetHeight)) {
-          let scroll_to = 0;
+        if (!(activeNode.offsetTop >= listNode.scrollTop && activeNode.offsetTop + activeNode.offsetHeight < listNode.scrollTop + listNode.offsetHeight)) {
+          let scrollTo = 0;
 
-          if (active_node.offsetTop > list_node.scrollTop) {
-            scroll_to = active_node.offsetTop + active_node.offsetHeight - list_node.offsetHeight;
-          } else if (active_node.offsetTop < list_node.scrollTop) {
-            scroll_to = active_node.offsetTop;
+          if (activeNode.offsetTop > listNode.scrollTop) {
+            scrollTo = activeNode.offsetTop + activeNode.offsetHeight - listNode.offsetHeight;
+          } else if (activeNode.offsetTop < listNode.scrollTop) {
+            scrollTo = activeNode.offsetTop;
           }
 
-          list_node.scrollTo(0, scroll_to);
+          listNode.scrollTo(0, scrollTo);
         }
       });
     },
@@ -151,8 +153,15 @@ var script = /*#__PURE__*/defineComponent({
     },
 
     boldMatchText(text) {
-      const regexp = new RegExp(`(${this.escapeRegExp(this.input)})`, 'ig');
-      return text.replace(regexp, '<strong>$1</strong>');
+      // Split the user input by whitespace and highlight each found token.
+      const tokens = this.input.trim().split(/\s+/);
+      let highlighted = text;
+      tokens.forEach(token => {
+        if (!token) return;
+        const re = new RegExp(`(${this.escapeRegExp(token)})`, 'ig');
+        highlighted = highlighted.replace(re, '<strong>$1</strong>');
+      });
+      return highlighted;
     },
 
     clearInput() {
@@ -180,8 +189,25 @@ var script = /*#__PURE__*/defineComponent({
     },
 
     filteredItems() {
-      const regexp = new RegExp(this.escapeRegExp(this.input), 'i');
-      return this.items.filter(item => this.itemProjection(item).match(regexp));
+      const userInput = this.input.trim();
+
+      if (!userInput) {
+        return this.items;
+      }
+
+      if (this.exactMatches) {
+        const regexp = new RegExp(this.escapeRegExp(this.input), 'i');
+        return this.items.filter(item => this.itemProjection(item).match(regexp));
+      } // Split user input into tokens and lowercase them
+
+
+      const tokens = userInput.split(/\s+/).map(t => t.toLowerCase());
+      return this.items.filter(item => {
+        // Lowercase the projected text
+        const text = this.itemProjection(item).toLowerCase(); // Keep if at least one token matches
+
+        return tokens.some(token => text.includes(token));
+      });
     },
 
     isListVisible() {
@@ -195,7 +221,7 @@ var script = /*#__PURE__*/defineComponent({
   }
 });
 
-pushScopeId("data-v-f81ca714");
+pushScopeId("data-v-23692a0f");
 
 const _hoisted_1 = ["id"];
 const _hoisted_2 = ["id", "placeholder"];
@@ -260,7 +286,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 }
 
 script.render = render;
-script.__scopeId = "data-v-f81ca714";
+script.__scopeId = "data-v-23692a0f";
 
 // Import vue component
 // IIFE injects install function into component, allowing component
