@@ -1,15 +1,16 @@
-# vue3-simple-typeahead
+# vue3-simple-typeahead-stdunn
 
-[![npm](https://img.shields.io/npm/v/vue3-simple-typeahead.svg)](https://www.npmjs.com/package/vue3-simple-typeahead)
+[![npm](https://img.shields.io/npm/v/vue3-simple-typeahead.svg)](https://www.npmjs.com/package/vue3-simple-typeahead-stdunn)
 [![vue3](https://img.shields.io/badge/vue-3.x-brightgreen.svg)](https://v3.vuejs.org/)
 [![License](https://img.shields.io/npm/l/vue3-simple-typeahead)](https://en.wikipedia.org/wiki/MIT_License)
-[![npm](https://img.shields.io/npm/dt/vue3-simple-typeahead.svg)](https://www.npmjs.com/package/vue3-simple-typeahead)
-[![npm bundle size](https://img.shields.io/bundlephobia/min/vue3-simple-typeahead?color=brightgreen)](https://www.npmjs.com/package/vue3-simple-typeahead)
+[![npm](https://img.shields.io/npm/dt/vue3-simple-typeahead.svg)](https://www.npmjs.com/package/vue3-simple-typeahead-stdunn)
+[![npm bundle size](https://img.shields.io/bundlephobia/min/vue3-simple-typeahead?color=brightgreen)](https://www.npmjs.com/package/vue3-simple-typeahead-stdunn)
 
 A Vue3 component for a simple typeahead component.
-It will show a list of suggested items based on the user input.
+Forked from the original (https://www.npmjs.com/package/vue3-simple-typeahead) to allow for tokenized (non-exact) string matching.
 
-The component includes it's own input and when the user types on it the suggested options appear.
+Shows a list of suggested items based on the user input.
+The component includes its own input and when the user types on it the suggested options appear.
 
 ![Demo](vue3-simple-typeahead.gif)
 
@@ -24,7 +25,7 @@ The component includes it's own input and when the user types on it the suggeste
 ### [NPM](https://www.npmjs.com/package/vue3-simple-typeahead)
 
 ```js
-npm install vue3-simple-typeahead
+npm install vue3-simple-typeahead-stdunn
 ```
 
 ### Browser
@@ -32,7 +33,7 @@ npm install vue3-simple-typeahead
 You can also use the browser bundle in a script tag.
 
 ```html
-<script src="https://unpkg.com/vue3-simple-typeahead"></script>
+<script src="https://unpkg.com/vue3-simple-typeahead-stdunn"></script>
 ```
 
 ## Add installed component to your app
@@ -42,8 +43,8 @@ Import the vue3-simple-typeahead component and register it globally in your Vue 
 ```js
 import { createApp } from 'vue';
 import App from './App.vue';
-import SimpleTypeahead from 'vue3-simple-typeahead';
-import 'vue3-simple-typeahead/dist/vue3-simple-typeahead.css'; //Optional default CSS
+import SimpleTypeahead from 'vue3-simple-typeahead-stdunn';
+import 'vue3-simple-typeahead-stdunn/dist/vue3-simple-typeahead.css'; //Optional default CSS
 
 let app = createApp(App);
 app.use(SimpleTypeahead);
@@ -53,8 +54,8 @@ app.mount('#app');
 You can also import vue3-simple-typeahead locally in your component if you prefer.
 
 ```js
-import SimpleTypeahead from 'vue3-simple-typeahead';
-import 'vue3-simple-typeahead/dist/vue3-simple-typeahead.css'; //Optional default CSS
+import SimpleTypeahead from 'vue3-simple-typeahead-stdunn';
+import 'vue3-simple-typeahead-stdunn/dist/vue3-simple-typeahead.css'; //Optional default CSS
 
 export default {
 	name: 'my-vue-component',
