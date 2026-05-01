@@ -241,23 +241,57 @@ function _nonIterableRest() {
 
       if (!this.tokenizedMatches) {
         var regexp = new RegExp(this.escapeRegExp(this.input), 'i');
+        var lowerInput = userInput.toLowerCase();
         return this.items.filter(function (item) {
           return _this3.itemProjection(item).match(regexp);
-        });
-      } // Split user input into tokens and lowercase them
+        }).sort(function (a, b) {
+          var aText = _this3.itemProjection(a).toLowerCase();
 
+          var bText = _this3.itemProjection(b).toLowerCase();
+
+          var aExact = aText === lowerInput;
+          var bExact = bText === lowerInput;
+          if (aExact !== bExact) return aExact ? -1 : 1;
+          var aStarts = aText.startsWith(lowerInput);
+          var bStarts = bText.startsWith(lowerInput);
+          if (aStarts !== bStarts) return aStarts ? -1 : 1;
+          return aText.indexOf(lowerInput) - bText.indexOf(lowerInput);
+        });
+      }
 
       var tokens = userInput.split(/\s+/).map(function (t) {
         return t.toLowerCase();
       });
       return this.items.filter(function (item) {
-        // Lowercase the projected text
-        var text = _this3.itemProjection(item).toLowerCase(); // Keep if at least one token matches
-
+        var text = _this3.itemProjection(item).toLowerCase();
 
         return tokens.some(function (token) {
           return text.includes(token);
         });
+      }).sort(function (a, b) {
+        var aText = _this3.itemProjection(a).toLowerCase();
+
+        var bText = _this3.itemProjection(b).toLowerCase();
+
+        var aCount = tokens.filter(function (t) {
+          return aText.includes(t);
+        }).length;
+        var bCount = tokens.filter(function (t) {
+          return bText.includes(t);
+        }).length;
+        if (aCount !== bCount) return bCount - aCount;
+        var aStarts = aText.startsWith(tokens[0]);
+        var bStarts = bText.startsWith(tokens[0]);
+        if (aStarts !== bStarts) return aStarts ? -1 : 1;
+        var aIdx = tokens.reduce(function (min, t) {
+          var i = aText.indexOf(t);
+          return i >= 0 && i < min ? i : min;
+        }, Infinity);
+        var bIdx = tokens.reduce(function (min, t) {
+          var i = bText.indexOf(t);
+          return i >= 0 && i < min ? i : min;
+        }, Infinity);
+        return aIdx - bIdx;
       });
     },
     isListVisible: function isListVisible() {
@@ -267,7 +301,7 @@ function _nonIterableRest() {
       return this.isListVisible && this.currentSelectionIndex < this.filteredItems.length ? this.filteredItems[this.currentSelectionIndex] : undefined;
     }
   }
-});vue.pushScopeId("data-v-99a07096");
+});vue.pushScopeId("data-v-2fad689b");
 
 var _hoisted_1 = ["id"];
 var _hoisted_2 = ["id", "placeholder"];
@@ -350,7 +384,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, _hoisted_7))], 42, _hoisted_5);
   }), 128)), _ctx.$slots['list-footer'] ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_8, [vue.renderSlot(_ctx.$slots, "list-footer")])) : vue.createCommentVNode("", true)])) : vue.createCommentVNode("", true)], 8, _hoisted_1);
 }script.render = render;
-script.__scopeId = "data-v-99a07096";// Import vue component
+script.__scopeId = "data-v-2fad689b";// Import vue component
 // IIFE injects install function into component, allowing component
 // to be registered via Vue.use() as well as Vue.component(),
 

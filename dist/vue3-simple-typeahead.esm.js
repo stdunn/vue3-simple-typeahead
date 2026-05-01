@@ -197,16 +197,42 @@ var script = defineComponent({
 
       if (!this.tokenizedMatches) {
         const regexp = new RegExp(this.escapeRegExp(this.input), 'i');
-        return this.items.filter(item => this.itemProjection(item).match(regexp));
-      } // Split user input into tokens and lowercase them
-
+        const lowerInput = userInput.toLowerCase();
+        return this.items.filter(item => this.itemProjection(item).match(regexp)).sort((a, b) => {
+          const aText = this.itemProjection(a).toLowerCase();
+          const bText = this.itemProjection(b).toLowerCase();
+          const aExact = aText === lowerInput;
+          const bExact = bText === lowerInput;
+          if (aExact !== bExact) return aExact ? -1 : 1;
+          const aStarts = aText.startsWith(lowerInput);
+          const bStarts = bText.startsWith(lowerInput);
+          if (aStarts !== bStarts) return aStarts ? -1 : 1;
+          return aText.indexOf(lowerInput) - bText.indexOf(lowerInput);
+        });
+      }
 
       const tokens = userInput.split(/\s+/).map(t => t.toLowerCase());
       return this.items.filter(item => {
-        // Lowercase the projected text
-        const text = this.itemProjection(item).toLowerCase(); // Keep if at least one token matches
-
+        const text = this.itemProjection(item).toLowerCase();
         return tokens.some(token => text.includes(token));
+      }).sort((a, b) => {
+        const aText = this.itemProjection(a).toLowerCase();
+        const bText = this.itemProjection(b).toLowerCase();
+        const aCount = tokens.filter(t => aText.includes(t)).length;
+        const bCount = tokens.filter(t => bText.includes(t)).length;
+        if (aCount !== bCount) return bCount - aCount;
+        const aStarts = aText.startsWith(tokens[0]);
+        const bStarts = bText.startsWith(tokens[0]);
+        if (aStarts !== bStarts) return aStarts ? -1 : 1;
+        const aIdx = tokens.reduce((min, t) => {
+          const i = aText.indexOf(t);
+          return i >= 0 && i < min ? i : min;
+        }, Infinity);
+        const bIdx = tokens.reduce((min, t) => {
+          const i = bText.indexOf(t);
+          return i >= 0 && i < min ? i : min;
+        }, Infinity);
+        return aIdx - bIdx;
       });
     },
 
@@ -221,7 +247,7 @@ var script = defineComponent({
   }
 });
 
-pushScopeId("data-v-99a07096");
+pushScopeId("data-v-2fad689b");
 
 const _hoisted_1 = ["id"];
 const _hoisted_2 = ["id", "placeholder"];
@@ -286,7 +312,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 }
 
 script.render = render;
-script.__scopeId = "data-v-99a07096";
+script.__scopeId = "data-v-2fad689b";
 
 // Import vue component
 // IIFE injects install function into component, allowing component
