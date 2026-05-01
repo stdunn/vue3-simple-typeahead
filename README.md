@@ -1,10 +1,10 @@
 # vue3-simple-typeahead-stdunn
 
-[![npm](https://img.shields.io/npm/v/vue3-simple-typeahead.svg)](https://www.npmjs.com/package/vue3-simple-typeahead-stdunn)
+[![npm](https://img.shields.io/npm/v/vue3-simple-typeahead-stdunn.svg)](https://www.npmjs.com/package/vue3-simple-typeahead-stdunn)
 [![vue3](https://img.shields.io/badge/vue-3.x-brightgreen.svg)](https://v3.vuejs.org/)
-[![License](https://img.shields.io/npm/l/vue3-simple-typeahead)](https://en.wikipedia.org/wiki/MIT_License)
-[![npm](https://img.shields.io/npm/dt/vue3-simple-typeahead.svg)](https://www.npmjs.com/package/vue3-simple-typeahead-stdunn)
-[![npm bundle size](https://img.shields.io/bundlephobia/min/vue3-simple-typeahead?color=brightgreen)](https://www.npmjs.com/package/vue3-simple-typeahead-stdunn)
+[![License](https://img.shields.io/npm/l/vue3-simple-typeahead-stdunn)](https://en.wikipedia.org/wiki/MIT_License)
+[![npm](https://img.shields.io/npm/dt/vue3-simple-typeahead-stdunn.svg)](https://www.npmjs.com/package/vue3-simple-typeahead-stdunn)
+[![npm bundle size](https://img.shields.io/bundlephobia/min/vue3-simple-typeahead-stdunn?color=brightgreen)](https://www.npmjs.com/package/vue3-simple-typeahead-stdunn)
 
 A Vue3 component for a simple typeahead component.
 Forked from the original (https://www.npmjs.com/package/vue3-simple-typeahead) to allow for tokenized (non-exact) string matching.
